@@ -3,17 +3,24 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "vue": "^2.5.17"
+    "chart.js": "^2.7.2",
+    "eslint-plugin-vue": "^4.7.1",
+    "moment": "^2.22.2",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
+    "vue": "^2.5.17",
+    "vue-chartjs": "^3.4.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.4",
     "@vue/cli-plugin-eslint": "^3.0.4",
     "@vue/cli-service": "^3.0.4",
+    "vue-svg-loader": "^0.10.0",
     "vue-template-compiler": "^2.5.17"
   },
   "eslintConfig": {
