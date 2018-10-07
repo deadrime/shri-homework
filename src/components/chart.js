@@ -27,7 +27,7 @@ export default {
     const datasets = this.data.map(i => {
       const [type, values] = Object.entries(i)[0]
       values.map(i => {
-        labels.add( moment.unix(i[0]).lang('ru').format('dddd DD/MM'))
+        labels.add( moment.unix(i[0]).locale('ru').format('dddd DD/MM'))
       })
       return {
         label: typeTranslate[type],
@@ -37,8 +37,8 @@ export default {
             y: i[1],
           }
         }),
-        pointRadius: 4,
-        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointBorderWidth: 3,
         fill: false,
         backgroundColor: 'transparent',
         ...typeStyles[type],
