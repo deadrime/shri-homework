@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import data from "@/events.json";
-import Event from "@/components/Event";
+import data from '@/events.json'
+import Event from '@/components/Event'
 
 export default {
   components: {
@@ -22,21 +22,21 @@ export default {
   data() {
     return {
       events: data.events
-    };
+    }
   },
   methods: {
     eventClass(size) {
       switch (size) {
-        case "s":
-          return "event event--small";
-        case "m":
-          return "event event--medium";
-        case "l":
-          return "event event--large";
+        case 's':
+          return 'event event--small'
+        case 'm':
+          return 'event event--medium'
+        case 'l':
+          return 'event event--large'
       }
     }
   }
-};
+}
 </script>
 
 
