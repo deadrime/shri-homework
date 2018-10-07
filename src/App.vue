@@ -2,8 +2,7 @@
   <div id="app">
     <AppHeader/>
     <div class="page-content">
-      <h1 class="page-title">Лента событий</h1>
-      <Events/>
+      <router-view/>
     </div>
     <AppFooter/>
   </div>
@@ -33,11 +32,6 @@ html, body
 .page-content
   padding 0 20px
 
-.page-title
-  font-size 1.5rem
-  margin 1.125rem 0
-  color #333333
-
 #app
   font-family Arial, sans-serif
   -webkit-font-smoothing antialiased
@@ -46,8 +40,4 @@ html, body
 @media screen and (min-width: 750px)
   .page-content
     padding 0 40px
-
-  .page-title
-    margin 2.125rem 0 2rem
-    font-size 2.25rem
 </style>
