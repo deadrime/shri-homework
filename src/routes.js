@@ -3,12 +3,12 @@ import Events from '@/components/Events'
 import Camera from '@/components/Camera'
 
 const routes = [
+  { path: '/', redirect: '/events' },
   { path: '/events', component: Events },
   { path: '/camera', component: Camera}
 ]
 
 const router = new VueRouter({
-  mode: 'history',
   routes,
 })
 
