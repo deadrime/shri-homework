@@ -26,7 +26,6 @@
 </template>
 
 <script>
-
 export default {
   data() {
     return {
@@ -38,7 +37,7 @@ export default {
   },
   mounted() {
     const camera = this.$refs.cameraImage
-    const imageW = test.clientWidth
+    const imageW = camera.clientWidth
     this.previewW = (this.$refs.preview.clientWidth * imageW) / 2000
 
     let watchMove = false
@@ -53,11 +52,15 @@ export default {
     let brightnessTmp = 100
     const rotateDetectLvl = 10
 
-    const getMidpoint = (x0, x1, y0, y1) => {
+    const getMidpoint = (x1, x2, y1, y2) => {
       return {
-        x: (x0 + x1) / 2,
-        y: (y0 + y1) / 2
+        x: (x1 + x2) / 2,
+        y: (y1 + y2) / 2
       }
+    }
+
+    const spaceBetween = (x1, x2, y1, y2) => {
+      return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
     }
 
     const isRotate = () => {
@@ -88,13 +91,11 @@ export default {
     const isPinch = () => {
       const [move1, move2] = Object.values(pointerMoveEvents)
       const [down1, down2] = Object.values(pointerDownEvents)
-      const m = getMidpoint(down1.x, down1.x, down1.y, down2.y)
-      const d1 = Math.sqrt(
-        (move1.clientX - m.x) ** 2 + (move1.clientY - m.y) ** 2
-      )
-      const d2 = Math.sqrt(
-        (move2.clientX - m.x) ** 2 + (move2.clientY - m.y) ** 2
-      )
+      const middle = getMidpoint(down1.x, down1.x, down1.y, down2.y)
+
+      const d1 = spaceBetween(move1.clientX, middle.x, move1.clientY, middle.y)
+      const d2 = spaceBetween(move2.clientX, middle.x, move2.clientY, middle.y)
+
       const diff = Math.abs(d1 - d2)
       if (diff >= 20) {
         return true
@@ -115,7 +116,11 @@ export default {
           watchMove = false
         },
         pointermove: e => {
-          if (Object.values(pointerDownEvents).length > 1 || Object.values(pointerMoveEvents).length > 1) return
+          if (
+            Object.values(pointerDownEvents).length > 1 ||
+            Object.values(pointerMoveEvents).length > 1
+          )
+            return
           if (!watchMove) return
           diff = e.clientX - tmpX
           let position = 50 - (diff / imageW) * 100
@@ -127,30 +132,25 @@ export default {
       },
       pinch: {
         pointerdown: () => {
-          const [firstFinger, secondFinger] = Object.values(
-            pointerDownEvents
-          )
+          const [firstFinger, secondFinger] = Object.values(pointerDownEvents)
           if (!firstFinger || !secondFinger) return
           const x1 = firstFinger.clientX
           const y1 = firstFinger.clientY
           const x2 = secondFinger.clientX
           const y2 = secondFinger.clientY
-          tmpL = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)) - diffL
-          tmpZoom = this.zoomLvl
+          tmpL = spaceBetween(x2, x1, y2, y1, y2) - diffL
         },
         pointerup: e => {
           return false
         },
         pointermove: () => {
-          const [firstFinger, secondFinger] = Object.values(
-            pointerMoveEvents
-          )
+          const [firstFinger, secondFinger] = Object.values(pointerMoveEvents)
           const x1 = firstFinger.clientX
           const y1 = firstFinger.clientY
           const x2 = secondFinger.clientX
           const y2 = secondFinger.clientY
 
-          const l = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+          const l = spaceBetween(x1, x2, y1, y2)
           diffL = l - tmpL
           this.zoomLvl = Math.max(1, 1 + diffL / imageW)
           this.previewW =
@@ -161,7 +161,7 @@ export default {
         pointermove: () => {
           const [move1, move2] = Object.values(pointerMoveEvents)
           const [down1, down2] = Object.values(pointerDownEvents)
-          
+
           const a = {
             x: down2.clientX - down1.clientX,
             y: down2.clientY - down1.clientY
@@ -213,19 +213,30 @@ export default {
       } else if (!currentGesture) {
         gesturesHandler['singleFinger'].pointerup(e)
       }
-      if (Object.keys(pointerMoveEvents).length === 0 && Object.keys(pointerDownEvents).length === 0) currentGesture = null
+      if (
+        Object.keys(pointerMoveEvents).length === 0 &&
+        Object.keys(pointerDownEvents).length === 0
+      )
+        currentGesture = null
     })
 
     camera.addEventListener('pointercancel', e => {
       delete pointerDownEvents[e.pointerId]
       delete pointerMoveEvents[e.pointerId]
-      if (Object.keys(pointerMoveEvents).length === 0 && Object.keys(pointerDownEvents).length === 0) currentGesture = null
+      if (
+        Object.keys(pointerMoveEvents).length === 0 &&
+        Object.keys(pointerDownEvents).length === 0
+      )
+        currentGesture = null
     })
 
     camera.addEventListener('pointerleave ', e => {
       delete pointerDownEvents[e.pointerId]
       delete pointerMoveEvents[e.pointerId]
-      if (Object.keys(pointerMoveEvents).length === 0 && Object.keys(pointerDownEvents).length === 0) currentGesture = null
+      if (
+        Object.keys(pointerMoveEvents).length === 0 &&
+        Object.keys(pointerDownEvents).length === 0
+      ) currentGesture = null
     })
 
     camera.addEventListener('pointermove', e => {
