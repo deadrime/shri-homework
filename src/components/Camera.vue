@@ -63,6 +63,7 @@ export default {
       return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
     }
 
+    // старый метод для определения rotate
     const isRotate = () => {
       const [move1, move2] = Object.values(pointerMoveEvents)
       const [down1, down2] = Object.values(pointerDownEvents)
@@ -86,22 +87,6 @@ export default {
         }
       }
       return false
-    }
-
-    const isPinch = () => {
-      const [move1, move2] = Object.values(pointerMoveEvents)
-      const [down1, down2] = Object.values(pointerDownEvents)
-      const middle = getMidpoint(down1.x, down1.x, down1.y, down2.y)
-
-      const d1 = spaceBetween(move1.clientX, middle.x, move1.clientY, middle.y)
-      const d2 = spaceBetween(move2.clientX, middle.x, move2.clientY, middle.y)
-
-      const diff = Math.abs(d1 - d2)
-      if (diff >= 20) {
-        return true
-      } else {
-        return false
-      }
     }
 
     const gesturesHandler = {
@@ -152,7 +137,7 @@ export default {
 
           const l = spaceBetween(x1, x2, y1, y2)
           diffL = l - tmpL
-          this.zoomLvl = Math.max(1, 1 + diffL / imageW)
+          this.zoomLvl = Math.max(1, 1 + diffL / imageW)*1.5
           this.previewW =
             (this.$refs.preview.clientWidth * imageW) / 2000 / this.zoomLvl
         }
@@ -183,10 +168,32 @@ export default {
     const findGesture = () => {
       const movedLength = Object.keys(pointerMoveEvents).length
       const dawnLength = Object.keys(pointerDownEvents).length
-      if (movedLength === 2 && dawnLength === 2) {
-        if (isPinch()) currentGesture = 'pinch'
-        if (isRotate()) currentGesture = 'rotate'
+      if (movedLength === 2 && dawnLength === 2) { // если 2 пальца
+        const [move1, move2] = Object.values(pointerMoveEvents)
+        const [down1, down2] = Object.values(pointerDownEvents)
+
+        const d1 = spaceBetween(move1.clientX, down1.clientX, move1.clientY, down1.clientY)
+        const d2 = spaceBetween(move2.clientX, down2.clientX, move2.clientY, down2.clientY)
+
+        if (d1 > 10 && d2 > 10) { // вектора длиной минимум 10 px
+          const a = {
+            x: down2.clientX - down1.clientX,
+            y: down2.clientY - down1.clientY
+          }
+          const b = {
+            x: move2.clientX - move1.clientX,
+            y: move2.clientY - move1.clientY
+          }
+          const test = Math.abs(Math.abs(a.x/b.x) - Math.abs(a.y/b.y))
+          // проверяем, насколько эти два вектора близки к тому, чтобы быть лежать на одной прямой
+          if (test > 0.4) { // получено методом тыка
+            currentGesture = 'rotate'
+          } else {
+            currentGesture = 'pinch'
+          }
+        }
       }
+      return null
     }
 
     camera.addEventListener('touchmove', e => {
@@ -241,6 +248,7 @@ export default {
 
     camera.addEventListener('pointermove', e => {
       pointerMoveEvents[e.pointerId] = e
+      console.log(currentGesture)
       if (
         Object.keys(pointerDownEvents).length >= 2 &&
         Object.keys(pointerMoveEvents).length >= 2
