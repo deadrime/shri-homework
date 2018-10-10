@@ -107,13 +107,16 @@ export default {
     const gesturesHandler = {
       singleFinger: {
         pointerdown: e => {
+          if (Object.values(pointerDownEvents).length > 1) return
           watchMove = true;
           tmpX = e.clientX - diff;
         },
         pointerup: e => {
+          if (Object.values(pointerDownEvents).length > 1) return
           watchMove = false;
         },
         pointermove: e => {
+          if (Object.values(pointerDownEvents).length > 1 || Object.values(pointerMoveEvents).length > 1) return
           if (!watchMove) return;
           let tmpDiff = diff;
           diff = e.clientX - tmpX;
@@ -204,7 +207,7 @@ export default {
     test.addEventListener("pointerdown", e => {
       pointerDownEvents[e.pointerId] = e;
       gesturesHandler["pinch"].pointerdown(e);
-      gesturesHandler["singleFinger"].pointerdown(e);
+      if (!currentGesture) gesturesHandler["singleFinger"].pointerdown(e);
     });
 
     test.addEventListener("pointerup", e => {
@@ -217,7 +220,7 @@ export default {
         Object.keys(pointerMoveEvents).length >= 2
       ) {
         gesturesHandler[currentGesture].pointerup(e);
-      } else {
+      } else if (!currentGesture) {
         gesturesHandler["singleFinger"].pointerup(e);
       }
       currentGesture = null;
