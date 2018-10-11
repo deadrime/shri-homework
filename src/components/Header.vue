@@ -47,7 +47,7 @@ export default {
   padding 0 1.25rem
 
   &__logo
-    background url('../assets/logo.png') no-repeat center
+    background url('../assets/logo.svg') no-repeat center
     background-size 100%
     width 110px
     height 37px
@@ -133,7 +133,7 @@ export default {
     width auto
     margin-right auto
     box-shadow none
-    padding-left 32px
+    padding-left 10px
 
     &__item
       box-shadow none

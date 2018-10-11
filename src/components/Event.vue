@@ -111,6 +111,7 @@ export default {
 
 <style lang="stylus" scoped>
 .button
+  cursor pointer
   padding 0.6875rem 0
   width 8.25rem
   border none
@@ -118,22 +119,25 @@ export default {
   font-size 1.25rem
   font-weight bold
   background #E5E5E5
+  transition background .2s
+  &:hover
+    background #FFD93E
 
-.icon-next
+.icon-next, .icon-close
+  transition opacity .2s
+  opacity 0
+  visibility hidden
   cursor pointer
-  display none
   position absolute
   right 1.5rem
-  bottom 1.5rem
 
 .icon-close
-  cursor pointer
-  display none
-  position absolute
-  right 1.5rem
   top 1.5rem
   stroke #666666
   fill #666666
+
+.icon-next
+  bottom 1.5rem
 
 .event
   text-align left
@@ -144,6 +148,7 @@ export default {
   flex-direction column
   overflow hidden
   position relative
+  transition all .2s
 
   &:hover
     background #F3F3F3
@@ -152,11 +157,9 @@ export default {
     &__body
       background #F3F3F3
 
-    .icon-next
-      display block
-
-    .icon-close
-      display block
+    .icon-next, .icon-close
+      visibility visible
+      opacity 1
 
   &__title
     padding-left 1rem
