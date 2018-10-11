@@ -49,11 +49,9 @@ export default {
     let tmpX = 0
     let tmpL = 0
     let diff = 0
-    let diffL = 0
     let currentGesture = null
     let pointerDownEvents = {}
     let pointerMoveEvents = {}
-    let fingers = []
     let brightnessTmp = 100
     const rotateDetectLvl = 10
 
