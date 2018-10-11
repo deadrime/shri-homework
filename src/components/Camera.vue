@@ -22,6 +22,9 @@
         />
       </div>
     </div>
+    <div class="info">
+      <span>Уровень приблежения: {{ zoomLvl.toFixed(2) }}</span>
+    </div>
   </div>
 </template>
 
@@ -30,9 +33,11 @@ export default {
   data() {
     return {
       bgPosX: 50,
+      zoomLvlTmp: 0,
       zoomLvl: 1,
       brightness: 100,
-      previewW: 0
+      previewW: 0,
+      info: {},
     }
   },
   mounted() {
@@ -60,7 +65,7 @@ export default {
     }
 
     const spaceBetween = (x1, x2, y1, y2) => {
-      return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+      return Math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
     }
 
     // старый метод для определения rotate
@@ -117,29 +122,24 @@ export default {
       },
       pinch: {
         pointerdown: () => {
-          const [firstFinger, secondFinger] = Object.values(pointerDownEvents)
-          if (!firstFinger || !secondFinger) return
-          const x1 = firstFinger.clientX
-          const y1 = firstFinger.clientY
-          const x2 = secondFinger.clientX
-          const y2 = secondFinger.clientY
-          tmpL = spaceBetween(x2, x1, y2, y1, y2) - diffL
+          this.zoomLvlTmp = this.zoomLvl
         },
         pointerup: e => {
-          return false
+
         },
         pointermove: () => {
-          const [firstFinger, secondFinger] = Object.values(pointerMoveEvents)
-          const x1 = firstFinger.clientX
-          const y1 = firstFinger.clientY
-          const x2 = secondFinger.clientX
-          const y2 = secondFinger.clientY
+          const [move1, move2] = Object.values(pointerMoveEvents)
+          const [down1, down2] = Object.values(pointerDownEvents)
+    
+          const l1 = spaceBetween(down1.clientX, down2.clientX, down1.clientY, down2.clientY)
+          const l2 = spaceBetween(move1.clientX, move2.clientX, move1.clientY, move2.clientY)
 
-          const l = spaceBetween(x1, x2, y1, y2)
-          diffL = l - tmpL
-          this.zoomLvl = Math.max(1, 1 + diffL / imageW)*1.5
-          this.previewW =
-            (this.$refs.preview.clientWidth * imageW) / 2000 / this.zoomLvl
+          const delta = (l2 - l1) / 50
+          const newZoom = delta + this.zoomLvlTmp
+          
+          this.zoomLvl = Math.min(5, Math.max(1, newZoom))
+
+          this.previewW = this.$refs.preview.clientWidth * imageW / 2000 / this.zoomLvl
         }
       },
       rotate: {
@@ -248,12 +248,10 @@ export default {
 
     camera.addEventListener('pointermove', e => {
       pointerMoveEvents[e.pointerId] = e
-      console.log(currentGesture)
       if (
         Object.keys(pointerDownEvents).length >= 2 &&
         Object.keys(pointerMoveEvents).length >= 2
       ) {
-        // return gesturesHandler["pinch"].pointermove(e);
         if (!currentGesture) findGesture()
         else gesturesHandler[currentGesture].pointermove(e)
       } else {
@@ -266,6 +264,8 @@ export default {
 
 <style lang="stylus" scoped>
 .camera
+  margin-top 1rem
+  border-radius .5rem
   width 100%
   height 300px
   overflow hidden
