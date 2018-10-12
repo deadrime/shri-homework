@@ -7,6 +7,7 @@
         :style="{
           backgroundImage:`url(${require('@/assets/panorama.jpg')}`,
           backgroundPositionX: `${bgPosX}%`,
+          backgroundPositionY: `${bgPosY}%`,
           transform: `scale(${zoomLvl})`,
           filter: `brightness(${brightness}%)`,
         }"
@@ -17,8 +18,9 @@
         <div 
           touch-action="none"
           :style="{
-            left: `calc(${bgPosX}% - ${previewW/2}px)`,
+            left: `calc(${bgPosX}%)`,
             width: `${previewW}px`,
+            transform: `translateX(-${bgPosX}%)`,
           }"
           class="camera__navigation__current"
         />
@@ -36,6 +38,7 @@ export default {
   data() {
     return {
       bgPosX: 50,
+      bgPosY: 50,
       zoomLvlTmp: 0,
       zoomLvl: 1,
       brightness: 100,
@@ -46,12 +49,14 @@ export default {
   mounted() {
     const camera = this.$refs.cameraImage
     const imageW = camera.clientWidth
+    const imageH = camera.clientHeight
     this.previewW = (this.$refs.preview.clientWidth * imageW) / 2000
-
     let watchMove = false
     let tmpX = 0
+    let tmpY = 0
     let tmpL = 0
-    let diff = 0
+    let diffX = 0
+    let diffY = 0
     let currentGesture = null
     let pointerDownEvents = {}
     let pointerMoveEvents = {}
@@ -100,7 +105,8 @@ export default {
         pointerdown: e => {
           if (Object.values(pointerDownEvents).length > 1) return
           watchMove = true
-          tmpX = e.clientX - diff
+          tmpX = e.clientX - diffX
+          tmpY = e.clientY - diffY
         },
         pointerup: e => {
           if (Object.values(pointerDownEvents).length > 1) return
@@ -113,9 +119,12 @@ export default {
           )
             return
           if (!watchMove) return
-          diff = e.clientX - tmpX
-          const position = 50 - (diff / imageW) * 60
-          this.bgPosX =  Math.min(100, Math.max(0, position))
+          diffX = e.clientX - tmpX
+          diffY = e.clientY - tmpY
+          const positionX = 50 - (diffX / imageW) * 50
+          const positionY = 50 - (diffY / imageH) * 50 * 2000 / 541
+          this.bgPosX = Math.min(100, Math.max(0, positionX))
+          this.bgPosY = Math.min(100, Math.max(0, positionY))
         }
       },
       pinch: {
@@ -166,6 +175,7 @@ export default {
     }
 
     const deleteEvent = ({pointerId}) => {
+      if (!pointerId) return
       delete pointerDownEvents[pointerId]
       delete pointerMoveEvents[pointerId]
       camera.releasePointerCapture(pointerId)
