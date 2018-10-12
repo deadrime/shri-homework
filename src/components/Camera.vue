@@ -25,7 +25,8 @@
       </div>
     </div>
     <div class="info">
-      <span>Уровень приблежения: {{ zoomLvl.toFixed(2) }}</span>
+      <p>Уровень приблежения: {{ (zoomLvl*100).toFixed(1) }}%</p>
+      <p>Уровень яркости: {{ brightness.toFixed(1) }}% </p>
     </div>
   </div>
 </template>
@@ -159,8 +160,8 @@ export default {
           const startAngle = Math.atan2(a.y, a.x)
           const endAngle = Math.atan2(b.y, b.x)
           const deltaAngle = (endAngle - startAngle) * 57.2958
-
-          this.brightness = deltaAngle + brightnessTmp
+          const newBrightness = deltaAngle + brightnessTmp
+          this.brightness = Math.min(300, Math.max(0, newBrightness))
         }
       }
     }
