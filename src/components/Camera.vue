@@ -3,6 +3,7 @@
     <div class="camera">
       <div
         ref="cameraImage"
+        touch-action="none"
         :style="{
           backgroundImage:`url(${require('@/assets/panorama.jpg')}`,
           backgroundPositionX: `${bgPosX}%`,
@@ -14,6 +15,7 @@
         ref="preview" 
         class="camera__navigation">
         <div 
+          touch-action="none"
           :style="{
             left: `calc(${bgPosX}% - ${previewW/2}px)`,
             width: `${previewW}px`,
