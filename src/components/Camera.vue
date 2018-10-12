@@ -114,7 +114,7 @@ export default {
             return
           if (!watchMove) return
           diff = e.clientX - tmpX
-          const position = 50 - (diff / imageW) * 100
+          const position = 50 - (diff / imageW) * 60
           this.bgPosX =  Math.min(100, Math.max(0, position))
         }
       },
