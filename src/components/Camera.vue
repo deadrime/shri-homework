@@ -114,20 +114,15 @@ export default {
             return
           if (!watchMove) return
           diff = e.clientX - tmpX
-          let position = 50 - (diff / imageW) * 100
-
-          position = position > 100 ? 100 : position
-          position = position < 0 ? 0 : position
-          this.bgPosX = position
+          const position = 50 - (diff / imageW) * 100
+          this.bgPosX =  Math.min(100, Math.max(0, position))
         }
       },
       pinch: {
         pointerdown: () => {
           this.zoomLvlTmp = this.zoomLvl
         },
-        pointerup: e => {
-
-        },
+        pointerup: () => {},
         pointermove: () => {
           const [move1, move2] = Object.values(pointerMoveEvents)
           const [down1, down2] = Object.values(pointerDownEvents)
@@ -144,6 +139,10 @@ export default {
         }
       },
       rotate: {
+        pointerdown: () => {
+          brightnessTmp = this.brightness
+        },
+        pointerup: () => {},
         pointermove: () => {
           const [move1, move2] = Object.values(pointerMoveEvents)
           const [down1, down2] = Object.values(pointerDownEvents)
@@ -162,8 +161,18 @@ export default {
           const deltaAngle = (endAngle - startAngle) * 57.2958
           const newBrightness = deltaAngle + brightnessTmp
           this.brightness = Math.min(300, Math.max(0, newBrightness))
-        }
+        },
       }
+    }
+
+    const deleteEvent = ({pointerId}) => {
+      delete pointerDownEvents[pointerId]
+      delete pointerMoveEvents[pointerId]
+      camera.releasePointerCapture(pointerId)
+      if (
+        Object.keys(pointerMoveEvents).length === 0 &&
+        Object.keys(pointerDownEvents).length === 0
+      ) currentGesture = null
     }
 
     const findGesture = () => {
@@ -187,11 +196,7 @@ export default {
           }
           const test = Math.abs(Math.abs(a.x/b.x) - Math.abs(a.y/b.y))
           // проверяем, насколько эти два вектора близки к тому, чтобы быть лежать на одной прямой
-          if (test > 0.4) { // получено методом тыка
-            currentGesture = 'rotate'
-          } else {
-            currentGesture = 'pinch'
-          }
+          currentGesture = test > 0.45 ? 'rotate' : 'pinch'
         }
       }
       return null
@@ -203,49 +208,21 @@ export default {
 
     camera.addEventListener('pointerdown', e => {
       e.preventDefault()
+      camera.setPointerCapture(e.pointerId)
       pointerDownEvents[e.pointerId] = e
       gesturesHandler['pinch'].pointerdown(e)
-      if (!currentGesture) gesturesHandler['singleFinger'].pointerdown(e)
+      gesturesHandler['rotate'].pointerdown(e)
+      gesturesHandler['singleFinger'].pointerdown(e)
     })
 
     camera.addEventListener('pointerup', e => {
-      brightnessTmp = this.brightness
-      delete pointerDownEvents[e.pointerId]
-      delete pointerMoveEvents[e.pointerId]
-
-      if (
-        Object.keys(pointerDownEvents).length >= 2 &&
-        Object.keys(pointerMoveEvents).length >= 2
-      ) {
-        gesturesHandler[currentGesture].pointerup(e)
-      } else if (!currentGesture) {
-        gesturesHandler['singleFinger'].pointerup(e)
-      }
-      if (
-        Object.keys(pointerMoveEvents).length === 0 &&
-        Object.keys(pointerDownEvents).length === 0
-      )
-        currentGesture = null
+      deleteEvent(e)
+      gesturesHandler['singleFinger'].pointerup(e)
     })
 
-    camera.addEventListener('pointercancel', e => {
-      delete pointerDownEvents[e.pointerId]
-      delete pointerMoveEvents[e.pointerId]
-      if (
-        Object.keys(pointerMoveEvents).length === 0 &&
-        Object.keys(pointerDownEvents).length === 0
-      )
-        currentGesture = null
-    })
-
-    camera.addEventListener('pointerleave ', e => {
-      delete pointerDownEvents[e.pointerId]
-      delete pointerMoveEvents[e.pointerId]
-      if (
-        Object.keys(pointerMoveEvents).length === 0 &&
-        Object.keys(pointerDownEvents).length === 0
-      ) currentGesture = null
-    })
+    camera.addEventListener('pointercancel', deleteEvent)
+    
+    camera.addEventListener('pointerleave ', deleteEvent)
 
     camera.addEventListener('pointermove', e => {
       pointerMoveEvents[e.pointerId] = e
