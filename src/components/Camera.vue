@@ -3,7 +3,6 @@
     <div class="camera">
       <div
         ref="cameraImage"
-        touch-action="none"
         :style="{
           backgroundImage:`url(${require('@/assets/panorama.jpg')}`,
           backgroundPositionX: `${bgPosX}%`,
@@ -11,17 +10,18 @@
           transform: `scale(${zoomLvl})`,
           filter: `brightness(${brightness}%)`,
         }"
+        touch-action="none"
         class="camera__image"/>
       <div 
         ref="preview" 
         class="camera__navigation">
         <div 
-          touch-action="none"
           :style="{
             left: `calc(${bgPosX}%)`,
             width: `${previewW}px`,
             transform: `translateX(-${bgPosX}%)`,
           }"
+          touch-action="none"
           class="camera__navigation__current"
         />
       </div>
