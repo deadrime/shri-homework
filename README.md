@@ -49,6 +49,7 @@ grid раскладку можно найти в components/Events
 
 # Мультимедиа
 
+Посмотреть: http://localhost:8080/#/live
 Код лежит тут: `./src/components/Live.vue`
 
 Анимацию делал через scale и transform.
