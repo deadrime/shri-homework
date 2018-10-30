@@ -8,10 +8,10 @@
   </div>
 </template>
 
-<script>
-import Events from './components/Events'
-import AppHeader from './components/Header'
-import AppFooter from './components/Footer'
+<script lang="ts">
+import Events from './components/Events.vue'
+import AppHeader from './components/Header.vue'
+import AppFooter from './components/Footer.vue'
 
 export default {
   name: 'YandexSmartHome',

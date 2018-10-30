@@ -1,7 +1,7 @@
 import VueRouter from 'vue-router'
-import Events from '@/components/Events'
-import Camera from '@/components/Camera'
-import Live from '@/components/Live'
+import Events from '@/components/Events.vue'
+import Camera from '@/components/Camera.vue'
+import Live from '@/components/Live.vue'
 
 const routes = [
   { path: '/', redirect: '/events' },

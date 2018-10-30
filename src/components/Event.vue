@@ -62,223 +62,318 @@
   </div>
 </template>
 
-<script>
-import EventChart from './chart.js'
-import Player from './Player'
-import NextIcon from '@/assets/icons/next.svg?inline'
-import CloseIcon from '@/assets/icons/cross.svg?inline'
+<script lang="ts">
+// import EventChart from "./chart.js";
+import Player from "./Player.vue";
+import Vue from "vue";
+// import NextIcon from '@/assets/icons/next.svg?inline'
+// import CloseIcon from '@/assets/icons/cross.svg?inline'
+const NextIcon = require("@/assets/icons/next.svg?inline");
+const CloseIcon = require("@/assets/icons/cross.svg?inline");
+const EventChart = require("./chart.js");
 
-export default {
+interface StateInterface {
+  icons: {
+    normal: {
+      [a: string]: string;
+    };
+    critical: {
+      [a: string]: string;
+    };
+  }
+}
+
+interface TemperatureData {
+  temperature: number,
+  humidity: number,
+}
+
+interface GraphData {
+  type: string,
+  values: {
+    [type: string]: (string | number)[]
+  }[],
+}
+
+interface PlayerData {
+  albumcover: string,
+  artist: string,
+  track: {
+    name: string,
+    length: string
+  },
+  volume: number,
+}
+
+interface Event {
+  type: 'info' | 'critical',
+  size: 'm' | 's' | 'l',
+  title: string,
+  source: string,
+  time: string,
+  description: string | null,
+  icon: string,
+  data?: TemperatureData | GraphData | PlayerData
+}
+
+const initState: StateInterface = {
+  icons: {
+    normal: {
+      stats: require("@/assets/icons/stats.svg"),
+      key: require("@/assets/icons/key.svg"),
+      "robot-cleaner": require("@/assets/icons/robot-cleaner.svg"),
+      router: require("@/assets/icons/router.svg"),
+      music: require("@/assets/icons/music.svg"),
+      cross: require("@/assets/icons/cross.svg"),
+      thermal: require("@/assets/icons/thermal.svg"),
+      fridge: require("@/assets/icons/fridge.svg"),
+      battery: require("@/assets/icons/battery.svg"),
+      kettle: require("@/assets/icons/kettle.svg")
+    },
+    critical: {
+      cam: require("@/assets/icons/cam-white.svg"),
+      ac: require("@/assets/icons/ac-white.svg")
+    }
+  }
+};
+
+export default Vue.extend({
   components: {
     EventChart,
     NextIcon,
     CloseIcon,
     Player
   },
-  props: ['data'],
+  props: {
+    data: Event
+  },
   data() {
-    return {
-      icons: {
-        normal: {
-          stats: require('@/assets/icons/stats.svg'),
-          key: require('@/assets/icons/key.svg'),
-          'robot-cleaner': require('@/assets/icons/robot-cleaner.svg'),
-          router: require('@/assets/icons/router.svg'),
-          music: require('@/assets/icons/music.svg'),
-          cross: require('@/assets/icons/cross.svg'),
-          thermal: require('@/assets/icons/thermal.svg'),
-          fridge: require('@/assets/icons/fridge.svg'),
-          battery: require('@/assets/icons/battery.svg'),
-          kettle: require('@/assets/icons/kettle.svg')
-        },
-        critical: {
-          cam: require('@/assets/icons/cam-white.svg'),
-          ac: require('@/assets/icons/ac-white.svg')
-        }
-      }
-    }
+    return initState
   },
   methods: {
-    eventIconSrc(icon, type) {
-      return type === 'critical'
+    eventIconSrc(icon: string, type: 'critical' | 'normal' | undefined) {
+      return type === "critical"
         ? this.icons.critical[icon]
-        : this.icons.normal[icon]
+        : this.icons.normal[icon];
     }
   }
-}
+});
 </script>
 
 
 <style lang="stylus" scoped>
-.button
-  cursor pointer
-  padding 0.6875rem 0
-  width 8.25rem
-  border none
-  border-radius 8px
-  font-size 1.25rem
-  font-weight bold
-  background #E5E5E5
-  transition background .2s
-  &:hover
-    background #FFD93E
+.button {
+  cursor: pointer;
+  padding: 0.6875rem 0;
+  width: 8.25rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  background: #E5E5E5;
+  transition: background 0.2s;
 
-.icon-next, .icon-close
-  transition opacity .2s
-  opacity 0
-  visibility hidden
-  cursor pointer
-  position absolute
-  right 1.5rem
+  &:hover {
+    background: #FFD93E;
+  }
+}
 
-.icon-close
-  top 1.5rem
-  stroke #666666
-  fill #666666
+.icon-next, .icon-close {
+  transition: opacity 0.2s;
+  opacity: 0;
+  visibility: hidden;
+  cursor: pointer;
+  position: absolute;
+  right: 1.5rem;
+}
 
-.icon-next
-  bottom 1.5rem
+.icon-close {
+  top: 1.5rem;
+  stroke: #666666;
+  fill: #666666;
+}
 
-.event
-  text-align left
-  border-radius 1.25rem
-  background #FAFAFA
-  color #333333
-  display flex
-  flex-direction column
-  overflow hidden
-  position relative
-  transition all .2s
+.icon-next {
+  bottom: 1.5rem;
+}
 
-  &:hover
-    background #F3F3F3
-    box-shadow 0 2px 6px 0 rgba(197, 186, 186, 0.5)
+.event {
+  text-align: left;
+  border-radius: 1.25rem;
+  background: #FAFAFA;
+  color: #333333;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.2s;
 
-    &__body
-      background #F3F3F3
+  &:hover {
+    background: #F3F3F3;
+    box-shadow: 0 2px 6px 0 rgba(197, 186, 186, 0.5);
 
-    .icon-next, .icon-close
-      visibility visible
-      opacity 1
+    &__body {
+      background: #F3F3F3;
+    }
 
-  &__title
-    padding-left 1rem
-    font-weight bold
-    font-size 0.875rem
-    margin 0
+    .icon-next, .icon-close {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
 
-  &__icon
-    width 2.25rem
-    height 2.25rem
+  &__title {
+    padding-left: 1rem;
+    font-weight: bold;
+    font-size: 0.875rem;
+    margin: 0;
+  }
 
-  &__description
-    margin 0
-    font-size 1.125rem
+  &__icon {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
 
-  &__info
-    font-size 0.875rem
-    padding-top 1.625rem
-    display flex
-    justify-content space-between
+  &__description {
+    margin: 0;
+    font-size: 1.125rem;
+  }
 
-    &__value
-      font-weight bold
+  &__info {
+    font-size: 0.875rem;
+    padding-top: 1.625rem;
+    display: flex;
+    justify-content: space-between;
 
-  &__body
-    padding 0 1rem 1rem 1rem
-    flex 1 0
-    border-top-left-radius 1.25rem
-    border-top-right-radius 1.25rem
+    &__value {
+      font-weight: bold;
+    }
+  }
 
-  &__header
-    padding 1rem
+  &__body {
+    padding: 0 1rem 1rem 1rem;
+    flex: 1 0;
+    border-top-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+  }
 
-  &__headline
-    align-items center
-    display flex
+  &__header {
+    padding: 1rem;
+  }
 
-  &__subheading
-    display flex
-    justify-content space-between
-    padding-top 0.875rem
-    font-size 0.75rem
+  &__headline {
+    align-items: center;
+    display: flex;
+  }
 
-  &__image
-    margin-top 1rem
-    width 100%
+  &__subheading {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 0.875rem;
+    font-size: 0.75rem;
+  }
 
-  &__buttons
-    display flex
-    justify-content space-between
-    padding-top 1.5rem
+  &__image {
+    margin-top: 1rem;
+    width: 100%;
+  }
 
-    .button:not(:first-child)
-      margin-left 1.125rem
+  &__buttons {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 1.5rem;
 
-  &__player
-    padding-top 1rem
+    .button:not(:first-child) {
+      margin-left: 1.125rem;
+    }
+  }
 
-  &__chart
-    padding 2rem 0 1rem
+  &__player {
+    padding-top: 1rem;
+  }
 
-.event--small
-  padding-bottom 4px
+  &__chart {
+    padding: 2rem 0 1rem;
+  }
+}
 
-  .event__subheading
-    display flex
-    flex-direction row
-    padding-bottom 0
+.event--small {
+  padding-bottom: 4px;
 
-.event--critical
-  background #DB5341
+  .event__subheading {
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 0;
+  }
+}
 
-  &:hover
-    background #DB5341
+.event--critical {
+  background: #DB5341;
 
-  .event__header
-    color #fff
+  &:hover {
+    background: #DB5341;
+  }
 
-  .event__body
-    padding-top 1rem
-    background #F3F3F3
+  .event__header {
+    color: #fff;
+  }
 
-  .icon-close
-    stroke #fff
-    fill #fff
+  .event__body {
+    padding-top: 1rem;
+    background: #F3F3F3;
+  }
 
-@media screen and (min-width: 750px)
-  .event
-    &__body, &__header
-      padding 1.25rem
+  .icon-close {
+    stroke: #fff;
+    fill: #fff;
+  }
+}
 
-    &__icon
-      width 3.25rem
-      height 3.25rem
+@media screen and (min-width: 750px) {
+  .event {
+    &__body, &__header {
+      padding: 1.25rem;
+    }
 
-    &__title
-      font-size 1.5rem
+    &__icon {
+      width: 3.25rem;
+      height: 3.25rem;
+    }
 
-    &__subheading
-      font-size 1.125rem
+    &__title {
+      font-size: 1.5rem;
+    }
 
-    &__description
-      font-size 1.25rem
+    &__subheading {
+      font-size: 1.125rem;
+    }
 
-    &__buttons
-      justify-content flex-start
+    &__description {
+      font-size: 1.25rem;
+    }
 
-    &__info
-      font-size 1.125rem
-      justify-content flex-start
-      &-humidity
-        padding-left 3.25rem
+    &__buttons {
+      justify-content: flex-start;
+    }
 
+    &__info {
+      font-size: 1.125rem;
+      justify-content: flex-start;
 
-  .event--small
-    .event__subheading
-      flex-direction column
+      &-humidity {
+        padding-left: 3.25rem;
+      }
+    }
+  }
 
-    .event__source
-      padding-bottom 20px
+  .event--small {
+    .event__subheading {
+      flex-direction: column;
+    }
+
+    .event__source {
+      padding-bottom: 20px;
+    }
+  }
+}
 </style>
-

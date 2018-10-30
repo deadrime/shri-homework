@@ -11,11 +11,14 @@
   </div>
 </template>
 
-<script>
-import data from '@/events.json'
-import Event from '@/components/Event'
+<script lang="ts">
 
-export default {
+import Event from '@/components/Event.vue' 
+import Vue from 'vue'
+
+const data = require('@/events.json')
+
+export default Vue.extend({
   components: {
     Event
   },
@@ -25,7 +28,7 @@ export default {
     }
   },
   methods: {
-    eventClass(size) {
+    eventClass(size: string) {
       switch (size) {
         case 's':
           return 'event event--small'
@@ -36,7 +39,7 @@ export default {
       }
     }
   }
-}
+})
 </script>
 
 

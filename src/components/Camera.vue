@@ -33,8 +33,10 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue'
+
+export default Vue.extend({
   data() {
     return {
       bgPosX: 50,
@@ -47,30 +49,31 @@ export default {
     }
   },
   mounted() {
-    const camera = this.$refs.cameraImage
+    const camera = this.$refs.cameraImage as HTMLElement
+    const preview = this.$refs.previe as HTMLElement
     const imageW = camera.clientWidth
     const imageH = camera.clientHeight
-    this.previewW = (this.$refs.preview.clientWidth * imageW) / 2000
+    this.previewW = (preview.clientWidth * imageW) / 2000
     let watchMove = false
     let tmpX = 0
     let tmpY = 0
     let tmpL = 0
     let diffX = 0
     let diffY = 0
-    let currentGesture = null
-    let pointerDownEvents = {}
-    let pointerMoveEvents = {}
+    let currentGesture: string | null = null
+    let pointerDownEvents: {[key: number]: PointerEvent} = {}
+    let pointerMoveEvents: {[key: number]: PointerEvent} = {}
     let brightnessTmp = 100
     const rotateDetectLvl = 10
 
-    const getMidpoint = (x1, x2, y1, y2) => {
+    const getMidpoint = (x1: number, x2 : number, y1 : number, y2: number): {x: number, y: number} => {
       return {
         x: (x1 + x2) / 2,
         y: (y1 + y2) / 2
       }
     }
 
-    const spaceBetween = (x1, x2, y1, y2) => {
+    const spaceBetween = (x1: number, x2 :number, y1: number, y2: number): number=> {
       return Math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
     }
 
@@ -100,19 +103,19 @@ export default {
       return false
     }
 
-    const gesturesHandler = {
+    const gesturesHandler: any = {
       singleFinger: {
-        pointerdown: e => {
+        pointerdown: (e: PointerEvent) => {
           if (Object.values(pointerDownEvents).length > 1) return
           watchMove = true
           tmpX = e.clientX - diffX
           tmpY = e.clientY - diffY
         },
-        pointerup: e => {
+        pointerup: (e: PointerEvent) => {
           if (Object.values(pointerDownEvents).length > 1) return
           watchMove = false
         },
-        pointermove: e => {
+        pointermove: (e: PointerEvent) => {
           if (
             Object.values(pointerDownEvents).length > 1 ||
             Object.values(pointerMoveEvents).length > 1
@@ -144,7 +147,8 @@ export default {
           
           this.zoomLvl = Math.min(5, Math.max(1, newZoom))
 
-          this.previewW = this.$refs.preview.clientWidth * imageW / 2000 / this.zoomLvl
+          const preview = this.$refs.preview as HTMLElement
+          this.previewW = preview.clientWidth * imageW / 2000 / this.zoomLvl
         }
       },
       rotate: {
@@ -174,7 +178,7 @@ export default {
       }
     }
 
-    const deleteEvent = ({pointerId}) => {
+    const deleteEvent = ({pointerId}: any) => {
       if (!pointerId) return
       delete pointerDownEvents[pointerId]
       delete pointerMoveEvents[pointerId]
@@ -231,7 +235,7 @@ export default {
     })
 
     camera.addEventListener('pointercancel', deleteEvent)
-    
+  
     camera.addEventListener('pointerleave ', deleteEvent)
 
     camera.addEventListener('pointermove', e => {
@@ -247,7 +251,7 @@ export default {
       }
     })
   }
-}
+})
 </script>
 
 <style lang="stylus" scoped>

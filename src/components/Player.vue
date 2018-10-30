@@ -34,20 +34,24 @@
   </div>
 </template>
 
-<script>
-import PrevNextIcon from '@/assets/player/Prev.svg?inline'
+<script lang="ts">
+// import PrevNextIcon from '@/assets/player/Prev.svg?inline'
+const PrevNextIcon = require('@/assets/player/Prev.svg?inline')
+import Vue from 'vue';
 
-export default {
+export default Vue.extend({
   components: {
     PrevNextIcon
   },
-  props: ['song'],
+  props: {
+    song: Object,
+  },
   computed: {
-    songName() {
+    songName(): string {
       return this.song.artist + ' - ' + this.song.track.name
     }
   }
-}
+})
 </script>
 
 <style lang="stylus" scoped>
