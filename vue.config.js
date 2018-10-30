@@ -17,5 +17,10 @@ module.exports = {
       .options({
         name: 'assets/[name].[hash:8].[ext]',
       })
+
+    const tsRule = config.module.rule('ts')
+    tsRule.use('ts-loader')
+    tsRule.use('babel-loader')
+    tsRule.use('cache-loader')
   },
 }
