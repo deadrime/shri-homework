@@ -66,9 +66,9 @@
 
 <script lang="ts">
 // import max from 'lodash/max'
-import Vue from "vue";
+import Vue from 'vue'
 // import Loader from '@/assets/oval.svg?inline'
-const Loader = require("@/assets/oval.svg?inline");
+const Loader = require('@/assets/oval.svg?inline')
 
 interface MyWindow extends Window {
   AudioContext: any;
@@ -76,7 +76,7 @@ interface MyWindow extends Window {
   webkitAudioContext: any;
 }
 
-declare const window: MyWindow;
+declare const window: MyWindow
 
 interface Video {
   id: string;
@@ -113,36 +113,36 @@ const initialState: InitialStateInterface = {
   previousVideo: null,
   videos: [
     {
-      id: "video1",
+      id: 'video1',
       url:
-        "http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fsosed%2Fmaster.m3u8",
+        'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fsosed%2Fmaster.m3u8',
       brightness: 100,
       contrast: 100
     },
     {
-      id: "video2",
+      id: 'video2',
       url:
-        "http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fcat%2Fmaster.m3u8",
+        'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fcat%2Fmaster.m3u8',
       brightness: 100,
       contrast: 100
     },
     {
-      id: "video3",
+      id: 'video3',
       url:
-        "http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fdog%2Fmaster.m3u8",
+        'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fdog%2Fmaster.m3u8',
       brightness: 100,
       contrast: 100
     },
     {
-      id: "video4",
+      id: 'video4',
       url:
-        "http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fhall%2Fmaster.m3u8",
+        'http://localhost:9191/master?url=http%3A%2F%2Flocalhost%3A3102%2Fstreams%2Fhall%2Fmaster.m3u8',
       brightness: 100,
       contrast: 100
     }
   ],
   loaded: {}
-};
+}
 
 export default Vue.extend({
   components: {
@@ -153,118 +153,118 @@ export default Vue.extend({
   },
   mounted() {
     this.videos.forEach(({ id, url }) => {
-      const el = (this.$refs[id] as any[])[0] as HTMLElement;
+      const el = (this.$refs[id] as any[])[0] as HTMLElement
       this.initVideo(el, url).then(hsl => {
-        this.loaded[id] = hsl;
-      });
-    });
+        this.loaded[id] = hsl
+      })
+    })
 
-    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    this.audioAnalyser = this.audioCtx.createScriptProcessor(1024, 1, 1);
-    this.audioAnalyser.connect(this.audioCtx.destination);
-    this.audioAnalyser.addEventListener("audioprocess", this.handleVolume);
+    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+    this.audioAnalyser = this.audioCtx.createScriptProcessor(1024, 1, 1)
+    this.audioAnalyser.connect(this.audioCtx.destination)
+    this.audioAnalyser.addEventListener('audioprocess', this.handleVolume)
   },
   methods: {
     detectMotion(id: string) {
-      const width = 640;
-      const height = 480;
-      const canvas = this.$refs.motionDetectCanvas as HTMLCanvasElement;
-      canvas.width = width;
-      canvas.height = height;
-      const context = canvas.getContext("2d");
+      const width = 640
+      const height = 480
+      const canvas = this.$refs.motionDetectCanvas as HTMLCanvasElement
+      canvas.width = width
+      canvas.height = height
+      const context = canvas.getContext('2d')
       if (!context) return
-      const watch = (this.$refs[id] as any[])[0] as HTMLCanvasElement;
+      const watch = (this.$refs[id] as any[])[0] as HTMLCanvasElement
       let imageData: Uint8ClampedArray
-      let frameDiff, diff;
-      let motionDetectedDelay = false;
+      let frameDiff, diff
+      let motionDetectedDelay = false
 
-      let prevImageData = context.getImageData(0, 0, width, height).data;
+      let prevImageData = context.getImageData(0, 0, width, height).data
 
       const animate = () => {
-        context.drawImage(watch, 0, 0, width, height);
+        context.drawImage(watch, 0, 0, width, height)
 
         const img = context ? context.getImageData(0, 0, width, height) : null
         if (img) {
-          imageData = img.data;
+          imageData = img.data
         }
-        frameDiff = 0;
+        frameDiff = 0
         for (let i = 0; i < imageData.length; i += 4) {
-          diff = 0;
+          diff = 0
           for (let j = 0; j < 3; j++) {
-            diff += ((imageData[i + j] - prevImageData[i + j]) / 255) ** 2;
+            diff += ((imageData[i + j] - prevImageData[i + j]) / 255) ** 2
           }
-          frameDiff += diff ** 1 / 2;
+          frameDiff += diff ** 1 / 2
         }
-        frameDiff /= imageData.length / 4;
-        prevImageData = imageData;
+        frameDiff /= imageData.length / 4
+        prevImageData = imageData
 
         if (!motionDetectedDelay) {
-          this.motionDetected = frameDiff > 0.00008 ? true : false;
+          this.motionDetected = frameDiff > 0.00008 ? true : false
           if (this.motionDetected) {
-            motionDetectedDelay = true;
+            motionDetectedDelay = true
             setInterval(() => {
-              motionDetectedDelay = false;
-            }, 500);
+              motionDetectedDelay = false
+            }, 500)
           }
         }
-      };
-      this.motionIntervalId = setInterval(animate, 100);
-      animate();
+      }
+      this.motionIntervalId = setInterval(animate, 100)
+      animate()
     },
     stopWatching() {
-      clearInterval(this.motionIntervalId);
+      clearInterval(this.motionIntervalId)
     },
     handleClick(id: string) {
-      if (this.currentVideo === id) return;
+      if (this.currentVideo === id) return
       const video = (this.$refs[id] as any[])[0] as HTMLVideoElement
-      video.volume = 1;
-      this.currentVideo = id;
-      this.detectMotion(id);
+      video.volume = 1
+      this.currentVideo = id
+      this.detectMotion(id)
 
       if (this.previousVideo !== id) {
         const audioSource = this.audioCtx.createMediaElementSource(
           video
-        );
-        audioSource.connect(this.audioAnalyser);
+        )
+        audioSource.connect(this.audioAnalyser)
       }
     },
     handleClose(id: string) {
-      this.previousVideo = id;
-      this.currentVideo = null;
-      this.stopWatching();
+      this.previousVideo = id
+      this.currentVideo = null
+      this.stopWatching()
     },
     changeQuality(id: string) {
-      const hls = this.loaded[id] as any;
-      hls.loadLevel = 2;
-      hls.startLoad();
+      const hls = this.loaded[id] as any
+      hls.loadLevel = 2
+      hls.startLoad()
     },
     handleVolume(e: any) {
-      const out = e.outputBuffer.getChannelData(0);
-      const int = e.inputBuffer.getChannelData(0);
-      let maxVolume = 0;
+      const out = e.outputBuffer.getChannelData(0)
+      const int = e.inputBuffer.getChannelData(0)
+      let maxVolume = 0
       for (let i = 0; i < int.length; i++) {
-        out[i] = int[i];
-        maxVolume = Math.max(int[i], maxVolume);
+        out[i] = int[i]
+        maxVolume = Math.max(int[i], maxVolume)
       }
-      this.volume = Math.min(100, Math.max(0, maxVolume * 100 * 2));
+      this.volume = Math.min(100, Math.max(0, maxVolume * 100 * 2))
     },
     initVideo(video: HTMLElement, url: string, autoQuality = false) {
       return new Promise((resolve, reject) => {
-        const hls = new window.Hls({ autoStartLoad: false });
-        hls.loadSource(url);
-        hls.attachMedia(video);
+        const hls = new window.Hls({ autoStartLoad: false })
+        hls.loadSource(url)
+        hls.attachMedia(video)
         hls.on(window.Hls.Events.MANIFEST_PARSED, () => {
-          hls.loadLevel = autoQuality ? -1 : 0;
-          hls.startLoad();
-          resolve(hls);
-        });
+          hls.loadLevel = autoQuality ? -1 : 0
+          hls.startLoad()
+          resolve(hls)
+        })
         hls.on(window.Hls.Events.ERROR, (err: Error) => {
-          reject(new Error(err.message));
-        });
-      });
+          reject(new Error(err.message))
+        })
+      })
     }
   }
-});
+})
 </script>
 
 <style lang="stylus" scoped>

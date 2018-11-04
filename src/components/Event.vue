@@ -64,13 +64,13 @@
 
 <script lang="ts">
 // import EventChart from "./chart.js";
-import Player from "./Player.vue";
-import Vue from "vue";
+import Player from './Player.vue'
+import Vue from 'vue'
 // import NextIcon from '@/assets/icons/next.svg?inline'
 // import CloseIcon from '@/assets/icons/cross.svg?inline'
-const NextIcon = require("@/assets/icons/next.svg?inline");
-const CloseIcon = require("@/assets/icons/cross.svg?inline");
-const EventChart = require("./chart.js");
+const NextIcon = require('@/assets/icons/next.svg?inline')
+const CloseIcon = require('@/assets/icons/cross.svg?inline')
+const EventChart = require('./chart.js')
 
 interface StateInterface {
   icons: {
@@ -119,23 +119,23 @@ interface Event {
 const initState: StateInterface = {
   icons: {
     normal: {
-      stats: require("@/assets/icons/stats.svg"),
-      key: require("@/assets/icons/key.svg"),
-      "robot-cleaner": require("@/assets/icons/robot-cleaner.svg"),
-      router: require("@/assets/icons/router.svg"),
-      music: require("@/assets/icons/music.svg"),
-      cross: require("@/assets/icons/cross.svg"),
-      thermal: require("@/assets/icons/thermal.svg"),
-      fridge: require("@/assets/icons/fridge.svg"),
-      battery: require("@/assets/icons/battery.svg"),
-      kettle: require("@/assets/icons/kettle.svg")
+      stats: require('@/assets/icons/stats.svg'),
+      key: require('@/assets/icons/key.svg'),
+      'robot-cleaner': require('@/assets/icons/robot-cleaner.svg'),
+      router: require('@/assets/icons/router.svg'),
+      music: require('@/assets/icons/music.svg'),
+      cross: require('@/assets/icons/cross.svg'),
+      thermal: require('@/assets/icons/thermal.svg'),
+      fridge: require('@/assets/icons/fridge.svg'),
+      battery: require('@/assets/icons/battery.svg'),
+      kettle: require('@/assets/icons/kettle.svg')
     },
     critical: {
-      cam: require("@/assets/icons/cam-white.svg"),
-      ac: require("@/assets/icons/ac-white.svg")
+      cam: require('@/assets/icons/cam-white.svg'),
+      ac: require('@/assets/icons/ac-white.svg')
     }
   }
-};
+}
 
 export default Vue.extend({
   components: {
@@ -152,12 +152,12 @@ export default Vue.extend({
   },
   methods: {
     eventIconSrc(icon: string, type: 'critical' | 'normal' | undefined) {
-      return type === "critical"
+      return type === 'critical'
         ? this.icons.critical[icon]
-        : this.icons.normal[icon];
+        : this.icons.normal[icon]
     }
   }
-});
+})
 </script>
 
 

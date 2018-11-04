@@ -37,7 +37,7 @@
 <script lang="ts">
 // import PrevNextIcon from '@/assets/player/Prev.svg?inline'
 const PrevNextIcon = require('@/assets/player/Prev.svg?inline')
-import Vue from 'vue';
+import Vue from 'vue'
 
 export default Vue.extend({
   components: {
