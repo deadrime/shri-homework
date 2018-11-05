@@ -56,3 +56,15 @@ grid раскладку можно найти в components/Events
 Для громкости подключил анализатор, который просто находит в `inputBuffer.getChannelData(0)` максимальное значение.
 Фильтры сделал при помощи CSS filters.
 Хотел сделать, чтобы по-умолчанию грузило в 360, а когда разворачиваешь - грузилось 720, но оно почему-то начинает ругаться на CORS и перестает грузиться =(
+
+# Store API
+
+## Опции конструктора Store
+ - state (`Object`) - корневой объект состояния
+ - mutations(`{[type: string]: Function}`) - доступные мутации, для изменения состояния достаточно изменить переданный `state`
+ 
+ ## Методы
+ - run (`type: String, args?: any`, ) - вызвать мутацию
+ - subscribe (`subscribe (handler: Function): Function(сurrentState, prevState)`) - подписка на изменения, `handler` будет вызван при любом вызове мутации и получит текущие и предыдущее состояние
+ - unsubscribe (`unsubscribe (handler: Function): Function`) - отписаться от изменений
+ - getState(`Function`) - получить текущее состояние
