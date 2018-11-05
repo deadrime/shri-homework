@@ -17,7 +17,8 @@
     "stylus-loader": "^3.0.2",
     "vue": "^2.5.17",
     "vue-chartjs": "^3.4.0",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "store": "file:./myStore"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.4",
