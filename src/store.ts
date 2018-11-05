@@ -4,7 +4,7 @@ interface State {
   [key: string]: any
 }
 
-type Mutation = ({state}: {state: State}) => any
+type Mutation = ({state}: {state: State}, args?: any) => any
 
 type Listener = ((newState: any, prevState: any) => any)
 
@@ -28,10 +28,10 @@ class Store {
     this.listeners = []
   }
 
-  run(action: string): any {
+  run(action: string, ...args: any): any {
     const prevState = this.state
     const newState = cloneDeep(this.state)
-    const result = this.mutations[action]({ state: newState })
+    const result = this.mutations[action]({ state: newState }, args)
     this.state = newState
     this.listeners.forEach(cb => {
       cb(newState, prevState)
