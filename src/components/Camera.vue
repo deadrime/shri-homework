@@ -48,6 +48,9 @@ export default Vue.extend({
       info: {},
     }
   },
+  created() {
+    
+  },
   mounted() {
     const camera = this.$refs.cameraImage as HTMLElement
     const preview = this.$refs.previe as HTMLElement

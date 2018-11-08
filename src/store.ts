@@ -1,18 +1,29 @@
-import {Store, Reducer} from "store"
+import { Store } from '../flux/src'
 
+interface InterfaceState {
+  counter: number,
+  test: {
+    huh: string
+  }
+}
 
-const myStore: Reducer = {
+const myStore = {
   state: {
-    counter: localStorage.getItem('counter') || 0,
+    counter: 0,
+    test: {
+      huh: 'uh'
+    }
   },
+  persisted: ['counter'],
   mutations: {
-    increment({ state }) {
+    increment(state: InterfaceState) {
       state.counter += 1
-      localStorage.setItem('counter',state.counter)
     },
-    decrement({ state }) {
+    decrement(state: InterfaceState) {
       state.counter -= 1
-      localStorage.setItem('counter',state.counter)
+    },
+    test(state: InterfaceState) {
+      state.test.huh += 'uh'
     }
   }
 }
